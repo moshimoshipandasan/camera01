@@ -1,63 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <div>
-    <video id="video" width="640" height="480" autoplay></video>
-    <div>
-      <button id="startButton">Start camera</button>
-      <button id="stopButton">Stop camera</button>
-      <button id="recordButton">Start recording</button>
-      <button id="downloadButton">Download</button>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>カメラアプリ</title>
+    <link rel="stylesheet" href="style2.css" />
+  </head>
+  <body>
+    <h1>カメラアプリ</h1>
+    <div class="video-container">
+      <video id="video" autoplay></video>
     </div>
-  </div>
-  <script>
-    const video = document.getElementById('video');
-    const startButton = document.getElementById('startButton');
-    const stopButton = document.getElementById('stopButton');
-    const recordButton = document.getElementById('recordButton');
-    const downloadButton = document.getElementById('downloadButton');
-
-    let stream;
-    let recorder;
-
-    startButton.addEventListener('click', async () => {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false
-      });
-      video.srcObject = stream;
-      video.play();
-    });
-
-    stopButton.addEventListener('click', () => {
-      const tracks = video.srcObject.getTracks();
-      tracks.forEach(track => track.stop());
-      video.srcObject = null;
-    });
-
-    recordButton.addEventListener('click', () => {
-      recorder = new MediaRecorder(stream);
-      const chunks = [];
-      recorder.ondataavailable = (event) => chunks.push(event.data);
-      recorder.onstop = (event) => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        chunks.length = 0;
-        downloadButton.href = URL.createObjectURL(blob);
-        downloadButton.download = 'recorded.webm';
-        downloadButton.click();
-      };
-      recorder.start();
-    });
-
-    downloadButton.addEventListener('click', () => {
-      recorder.stop();
-    });
-  </script>
-</body>
+    <div class="button-container">
+      <button id="start-button">カメラを開始</button>
+      <button id="stop-button" disabled>カメラを停止</button>
+      <button id="capture-button" disabled>写真を撮影</button>
+    </div>
+    <canvas id="canvas" hidden></canvas>
+    <script src="app.js"></script>
+  </body>
 </html>
